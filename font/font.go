@@ -2,18 +2,20 @@ package font
 
 import (
 	"crypto/sha256"
+	_ "embed"
 	"sync"
 
 	"golang.org/x/image/font"
 
 	"github.com/golang/freetype"
 	"github.com/golang/freetype/truetype"
-
-	"github.com/aarzilli/nucular/internal/assets"
 )
 
 var fontsMu sync.Mutex
 var fontsMap = map[[sha256.Size]byte]*truetype.Font{}
+
+//go:embed DroidSansMono.ttf
+var droidSansMonoFontData []byte
 
 type Face struct {
 	Face font.Face
@@ -21,8 +23,8 @@ type Face struct {
 
 // Returns default font (DroidSansMono) with specified size and scaling
 func DefaultFont(size int, scaling float64) Face {
-	fontData, _ := assets.Asset("DroidSansMono.ttf")
-	face, err := NewFace(fontData, int(float64(size)*scaling))
+	//fontData, _ := assets.Asset("DroidSansMono.ttf")
+	face, err := NewFace(droidSansMonoFontData, int(float64(size)*scaling))
 	if err != nil {
 		panic(err)
 	}

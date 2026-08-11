@@ -1,19 +1,16 @@
 package main
 
 import (
+	_ "embed"
 	"image/color"
 	"strings"
 
 	"github.com/aarzilli/nucular"
+	"github.com/aarzilli/nucular/font"
 	"github.com/aarzilli/nucular/rect"
 	"github.com/aarzilli/nucular/richtext"
 	"github.com/aarzilli/nucular/style"
-
-	"github.com/aarzilli/nucular/_examples/richtext/internal/assets"
-	"github.com/aarzilli/nucular/font"
 )
-
-//go:generate go-bindata -o internal/assets/assets.go -pkg assets DejaVuSans.ttf DejaVuSans-Bold.ttf DejaVuSans-Oblique.ttf
 
 var rtxt *richtext.RichText
 var selected int
@@ -26,21 +23,26 @@ var proportional, header, monospace, bold, italic font.Face
 
 const defaultFlags = richtext.Selectable | richtext.ShowTick | richtext.Clipboard | richtext.Keyboard
 
+//go:embed DejaVuSans.ttf
+var dejaVuSansRegular []byte
+
+//go:embed DejaVuSans-Bold.ttf
+var dejaVuSansBold []byte
+
+//go:embed DejaVuSans-Oblique.ttf
+var dejaVuSansOblique []byte
+
 func main() {
 	rtxt = richtext.New(defaultFlags)
 	wnd := nucular.NewMasterWindow(0, "Rich Text", updatefn)
 	wnd.SetStyle(style.FromTheme(style.DarkTheme, 2.0))
 
-	regularData, _ := assets.Asset("DejaVuSans.ttf")
-	boldData, _ := assets.Asset("DejaVuSans-Bold.ttf")
-	italicData, _ := assets.Asset("DejaVuSans-Oblique.ttf")
-
-	proportional, _ = font.NewFace(regularData, int(float64(12)*wnd.Style().Scaling))
-	header, _ = font.NewFace(regularData, int(float64(21)*wnd.Style().Scaling))
+	proportional, _ = font.NewFace(dejaVuSansRegular, int(float64(12)*wnd.Style().Scaling))
+	header, _ = font.NewFace(dejaVuSansRegular, int(float64(21)*wnd.Style().Scaling))
 	monospace = wnd.Style().Font
 
-	bold, _ = font.NewFace(boldData, int(float64(12)*wnd.Style().Scaling))
-	italic, _ = font.NewFace(italicData, int(float64(12)*wnd.Style().Scaling))
+	bold, _ = font.NewFace(dejaVuSansBold, int(float64(12)*wnd.Style().Scaling))
+	italic, _ = font.NewFace(dejaVuSansOblique, int(float64(12)*wnd.Style().Scaling))
 
 	searchEd.Flags = nucular.EditField
 
